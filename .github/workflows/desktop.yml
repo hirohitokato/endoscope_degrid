@@ -33,6 +33,23 @@ jobs:
         run: uv run --no-sync python -m pytest -q -s tests/test_desktop_archive.py
         env:
           DEGRID_ARCHIVE: dist/Endoscope-Degrid-${{ matrix.target }}.zip
+      - name: Open the packaged Windows GUI
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path 'dist/Endoscope Degrid/Endoscope Degrid.exe').Path
+          $gui = Start-Process -FilePath $exe -WorkingDirectory $env:RUNNER_TEMP -PassThru
+          try {
+            $deadline = [DateTime]::UtcNow.AddSeconds(60)
+            do {
+              Start-Sleep -Milliseconds 250
+              $gui.Refresh()
+              if ($gui.HasExited) { throw "GUI exited before opening a window" }
+            } until ($gui.MainWindowTitle -eq 'Endoscope Degrid' -or [DateTime]::UtcNow -gt $deadline)
+            if ($gui.MainWindowTitle -ne 'Endoscope Degrid') { throw "GUI window did not appear" }
+          } finally {
+            if (-not $gui.HasExited) { $gui.Kill() }
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: Endoscope-Degrid-${{ matrix.target }}

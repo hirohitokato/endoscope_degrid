@@ -35,16 +35,25 @@ def test_archive_processes_interlaced_video(tmp_path):
         subprocess.run([executable, *args], cwd=tmp_path, env=env, check=True, timeout=150)
 
     run("--version")
+    backend = os.getenv("DEGRID_BACKEND", "auto")
+    if sys.platform == "darwin" and backend == "auto":
+        # Headless runners may abort while probing MLX. On a Metal-capable
+        # host, assert that --backend auto also selects it in the frozen app.
+        probe = subprocess.run([sys.executable, "-c",
+                                "from endoscope_degrid.mlx_backend import probe_metal; raise SystemExit(probe_metal())"],
+                               timeout=30, cwd=tmp_path)
+        expected_backend = "metal" if probe.returncode == 0 else "cpu"
+    else:
+        expected_backend = "cpu" if backend == "auto" else backend
     output = tmp_path / "補正 結果.mp4"
-    run("process", source, "-o", output, "--samples", "8", "--backend", os.getenv("DEGRID_BACKEND", "auto"))
+    run("process", source, "-o", output, "--samples", "8", "--backend", backend)
     report_dir = tmp_path / "補正 結果_report"
     report = json.loads((report_dir / "report.json").read_text(encoding="utf-8"))
     assert output.stat().st_size > 0
     assert (report_dir / "comparison_0.png").stat().st_size > 0
     assert (report_dir / "spectrum_mask_field_0.png").stat().st_size > 0
     assert report["status"] == "complete"
-    if os.getenv("DEGRID_BACKEND") in ("cpu", "metal"):
-        assert report["output"]["backend"] == os.environ["DEGRID_BACKEND"]
+    assert report["output"]["backend"] == expected_backend
     result = report["output"]["verification"]
     assert result["decoded_frame_count"] == 18
     assert result["field_order"] == "tff"

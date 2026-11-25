@@ -26,6 +26,8 @@ if python_license.exists():
     data.append((str(python_license), "licenses/python"))
 
 a = Analysis([str(root / "packaging" / "launcher.py")], pathex=[str(root / "src")],
+             # mlx.core imports both Python helpers from its native extension.
+             hiddenimports=["mlx._reprlib_fix", "mlx.__array_api_info"] if mac else [],
              binaries=binaries, datas=data, excludes=["pytest"])
 pyz = PYZ(a.pure)
 gui = EXE(pyz, a.scripts, [("X utf8", None, "OPTION")], exclude_binaries=True, name="Endoscope Degrid",
