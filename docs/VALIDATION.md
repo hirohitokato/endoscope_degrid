@@ -52,7 +52,7 @@
 ## 再検証
 
 ```sh
-.venv/bin/python scripts/validate_outputs.py \
+uv run --locked python scripts/validate_outputs.py \
   /Users/a3140236/develop/works/airway_scope/data/videos/60fac7e7a2ec4af787b24a0a9edcbe51/source.mp4 \
   output/60fac7e7_degrid.mp4 --report-dir output/60fac7e7_degrid_report
 ```
