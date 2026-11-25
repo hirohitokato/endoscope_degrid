@@ -65,7 +65,7 @@ def _processing_backend(model, requested):
         return "cpu", model
 
 
-def _run_one(source, args, destination=None, report_dir=None):
+def run_one(source, args, destination=None, report_dir=None, *, progress=None):
     settings = _settings(args)
     settings.validate()
     if destination is not None and settings.method != "notch":
@@ -84,7 +84,9 @@ def _run_one(source, args, destination=None, report_dir=None):
     # Never let a report directory hide the source or output file.
     if report_dir == source or (destination is not None and report_dir == destination.resolve()):
         raise ValueError("report-dir must be a separate directory")
-    progress = None if args.quiet else lambda text: print(f"[{source.parent.name}/{source.name}] {text}", file=sys.stderr, flush=True)
+    if progress is None and not args.quiet:
+        def progress(text):
+            print(f"[{source.parent.name}/{source.name}] {text}", file=sys.stderr, flush=True)
     started = time.perf_counter()
     scan = scan_video(source, settings.samples, progress)
     report = dict(version=__version__, status="calibrating", source=scan.metadata, references=REFERENCES)
@@ -143,7 +145,7 @@ def main(argv=None):
                 destination = batch_destination(source, args.output)
                 report_dir = (args.report_dir/destination.stem) if args.report_dir else None
                 try:
-                    result = _run_one(source, args, destination, report_dir)
+                    result = run_one(source, args, destination, report_dir)
                     records.append(dict(source=str(source), status="complete", report=str(result)))
                     print(result)
                 except (ValueError, OSError, RuntimeError) as error:
@@ -153,7 +155,7 @@ def main(argv=None):
             args.output.mkdir(parents=True, exist_ok=True)
             write_json(args.output/"batch_report.json", records)
             return 1 if failures else 0
-        result = _run_one(args.inputs, args, getattr(args, "output", None))
+        result = run_one(args.inputs, args, getattr(args, "output", None))
         print(result)
         return 0
     except KeyboardInterrupt:
