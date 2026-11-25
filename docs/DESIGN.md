@@ -13,10 +13,10 @@
 
 | ファイル | 役割 |
 |---|---|
-| `degrid.py`, `endoscope_degrid/cli.py` | 引数、単一／一括処理、エラー、レポートの統括 |
-| `endoscope_degrid/algorithms.py` | 格子の校正、ノッチ設計、コア再構成。動画I/Oから独立 |
-| `endoscope_degrid/media.py` | 検査、時刻とフィールド順、映像再圧縮、音声コピー、出力検証 |
-| `endoscope_degrid/reporting.py` | 比較画像、周波数図、校正配列、JSON |
+| `degrid.py`, `src/endoscope_degrid/cli.py` | 引数、単一／一括処理、エラー、レポートの統括 |
+| `src/endoscope_degrid/algorithms.py` | 格子の校正、ノッチ設計、コア再構成。動画I/Oから独立 |
+| `src/endoscope_degrid/media.py` | 検査、時刻とフィールド順、映像再圧縮、音声コピー、出力検証 |
+| `src/endoscope_degrid/reporting.py` | 比較画像、周波数図、校正配列、JSON |
 | `tests/` | 合成格子の復元と動画の時間軸・音声・キャンセル等 |
 
 ## データフロー

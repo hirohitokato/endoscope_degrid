@@ -5,56 +5,44 @@
 `core` はファイバー標本の位置と透過率を推定し、不規則な標本から画像を再構成します。
 学習済みモデル、生成AI、画像全体のぼかし、モルフォロジーは使用しません。
 
-## セットアップ
+## ソースから使う
 
-Python 3.13で検証。Python 3.11以上が必要です。
+[uv](https://docs.astral.sh/uv/) を用意し、リポジトリのルートで実行します。
 
 ```sh
-cd /Users/a3140236/develop/works/endoscope_degrid
-python3.13 -m venv .venv
-.venv/bin/python -m pip install -e '.[test]'
-.venv/bin/python -m pytest -q
+uv sync --locked --managed-python --extra test
+uv run --locked --extra test pytest -q
 ```
 
-依存ライブラリのバージョンは `pyproject.toml` と `requirements.txt` に固定しています。
-PyAVのwheelに含まれるFFmpegライブラリを使うので、外部の `ffmpeg` / `ffprobe` コマンドは不要です。
-すべてローカルで処理します。動画やフレームの外部送信はありません。
+実行環境は `.python-version` と `uv.lock` で管理します。PyAV の FFmpeg ライブラリで、すべての動画をローカル処理します。
 
 ## 使い方
 
 最初に静止画と検出した周波数を確認できます。
 
 ```sh
-.venv/bin/python degrid.py analyze /path/to/source.mp4 --report-dir output/inspection
+uv run --locked endoscope-degrid analyze /path/to/source.mp4 --report-dir output/inspection
 ```
 
 10秒間の動画プレビューを生成します。元動画の30秒から始まります。
 
 ```sh
-.venv/bin/python degrid.py process /path/to/source.mp4 \
+uv run --locked endoscope-degrid process /path/to/source.mp4 \
   -o output/preview.mp4 --start 30 --duration 10
 ```
 
 全編処理は `--start` と `--duration` を省略します。
 
 ```sh
-.venv/bin/python degrid.py process /path/to/source.mp4 -o output/source_degrid.mp4
-```
-
-指定された最初の動画を処理する例:
-
-```sh
-.venv/bin/python degrid.py process \
-  /Users/a3140236/develop/works/airway_scope/data/videos/60fac7e7a2ec4af787b24a0a9edcbe51/source.mp4 \
-  -o output/60fac7e7_degrid.mp4
+uv run --locked endoscope-degrid process /path/to/source.mp4 -o output/source_degrid.mp4
 ```
 
 `core` を選ぶ場合、および両方式の静止画を比較する場合:
 
 ```sh
-.venv/bin/python degrid.py process /path/to/source.mp4 \
+uv run --locked endoscope-degrid process /path/to/source.mp4 \
   -o output/source_core.mp4 --method core --start 30 --duration 10
-.venv/bin/python degrid.py compare /path/to/source.mp4 --report-dir output/method_comparison
+uv run --locked endoscope-degrid compare /path/to/source.mp4 --report-dir output/method_comparison
 ```
 
 複数動画は逐次処理します。各動画で別々に校正します。
@@ -62,11 +50,9 @@ PyAVのwheelに含まれるFFmpegライブラリを使うので、外部の `ffm
 一つの動画が失敗しても残りを処理し、最後に非ゼロ終了コードを返します。
 
 ```sh
-.venv/bin/python degrid.py batch \
+uv run --locked endoscope-degrid batch \
   /path/to/first/source.mp4 /path/to/second/source.mp4 -o output/batch
 ```
-
-インストール後は `.venv/bin/endoscope-degrid` からも同じ引数で実行できます。
 
 ## 入出力の扱い
 
@@ -109,7 +95,7 @@ PyAVのwheelに含まれるFFmpegライブラリを使うので、外部の `ffm
 M2で検証した1080pの `notch` 出力では、フレーム並列処理と高速プリセットを次のように組み合わせられます。
 
 ```sh
-.venv/bin/python degrid.py process /path/to/source.mp4 -o output/fast.mp4 \
+uv run --locked endoscope-degrid process /path/to/source.mp4 -o output/fast.mp4 \
   --backend cpu --preset ultrafast --crf 16 --workers 2 --frame-workers 2
 ```
 
@@ -119,8 +105,7 @@ M2で検証した1080pの `notch` 出力では、フレーム並列処理と高�
 Apple Silicon Mac（macOS 14以降）では、オプション依存を追加すると格子除去をMetalで実行できます。
 
 ```sh
-.venv/bin/python -m pip install -e '.[gpu]'
-.venv/bin/python degrid.py process /path/to/source.mp4 -o output/metal.mp4 \
+uv run --locked --extra gpu endoscope-degrid process /path/to/source.mp4 -o output/metal.mp4 \
   --backend metal --preset ultrafast --crf 16 --workers 2 --frame-workers 2
 ```
 
