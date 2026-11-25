@@ -65,7 +65,7 @@ def _processing_backend(model, requested):
         return "cpu", model
 
 
-def run_one(source, args, destination=None, report_dir=None, *, progress=None):
+def run_one(source, args, destination=None, report_dir=None, *, progress=None, new_report=False):
     settings = _settings(args)
     settings.validate()
     if destination is not None and settings.method != "notch":
@@ -75,11 +75,15 @@ def run_one(source, args, destination=None, report_dir=None, *, progress=None):
     if destination is not None:
         if destination.resolve() == source:
             raise ValueError("入力と出力は別ファイルにしてください。")
+        if destination.suffix.lower() != source.suffix.lower():
+            raise ValueError("出力拡張子を入力と同じ MP4 / MOV にしてください。")
         if destination.exists() and not args.overwrite:
             raise FileExistsError(f"既存出力は上書きしません: {destination}")
     report_dir = report_dir or args.report_dir
     if report_dir is None:
         report_dir = destination.parent/(destination.stem+"_report")
+    if new_report and (report_dir.exists() or report_dir.is_symlink()):
+        raise FileExistsError(f"レポートが既にあります。別の保存名を指定してください: {report_dir}")
     report_dir = report_dir.resolve()
     # Never let a report directory hide the source or output file.
     if report_dir == source or (destination is not None and report_dir == destination.resolve()):
@@ -90,7 +94,7 @@ def run_one(source, args, destination=None, report_dir=None, *, progress=None):
     started = time.perf_counter()
     scan = scan_video(source, settings.samples, progress)
     report = dict(version=__version__, status="calibrating", source=scan.metadata, references=REFERENCES)
-    report_dir.mkdir(parents=True, exist_ok=True)
+    report_dir.mkdir(parents=True, exist_ok=not new_report)
     try:
         if args.command == "compare":
             report["methods"] = {}
