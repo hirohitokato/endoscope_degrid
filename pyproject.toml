@@ -17,6 +17,7 @@ gpu = ['mlx==0.32.4; sys_platform == "darwin" and platform_machine == "arm64"']
 endoscope-degrid = "endoscope_degrid.cli:main"
 
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["endoscope_degrid*"]
 
 [tool.pytest.ini_options]
