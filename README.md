@@ -12,9 +12,12 @@
 ```sh
 uv sync --locked --managed-python --extra test
 uv run --locked --extra test pytest -q
+uv run --locked endoscope-degrid-desktop
 ```
 
 実行環境は `.python-version` と `uv.lock` で管理します。PyAV の FFmpeg ライブラリで、すべての動画をローカル処理します。
+
+デスクトップ画面では動画を選び、先頭10秒または全編の出力先を指定します。
 
 ## 使い方
 

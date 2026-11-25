@@ -65,7 +65,7 @@ def _processing_backend(model, requested):
         return "cpu", model
 
 
-def _run_one(source, args, destination=None, report_dir=None):
+def run_one(source, args, destination=None, report_dir=None, *, progress=None, new_report=False):
     settings = _settings(args)
     settings.validate()
     if destination is not None and settings.method != "notch":
@@ -75,20 +75,26 @@ def _run_one(source, args, destination=None, report_dir=None):
     if destination is not None:
         if destination.resolve() == source:
             raise ValueError("入力と出力は別ファイルにしてください。")
+        if destination.suffix.lower() != source.suffix.lower():
+            raise ValueError("出力拡張子を入力と同じ MP4 / MOV にしてください。")
         if destination.exists() and not args.overwrite:
             raise FileExistsError(f"既存出力は上書きしません: {destination}")
     report_dir = report_dir or args.report_dir
     if report_dir is None:
         report_dir = destination.parent/(destination.stem+"_report")
+    if new_report and (report_dir.exists() or report_dir.is_symlink()):
+        raise FileExistsError(f"レポートが既にあります。別の保存名を指定してください: {report_dir}")
     report_dir = report_dir.resolve()
     # Never let a report directory hide the source or output file.
     if report_dir == source or (destination is not None and report_dir == destination.resolve()):
         raise ValueError("report-dir must be a separate directory")
-    progress = None if args.quiet else lambda text: print(f"[{source.parent.name}/{source.name}] {text}", file=sys.stderr, flush=True)
+    if progress is None and not args.quiet:
+        def progress(text):
+            print(f"[{source.parent.name}/{source.name}] {text}", file=sys.stderr, flush=True)
     started = time.perf_counter()
     scan = scan_video(source, settings.samples, progress)
     report = dict(version=__version__, status="calibrating", source=scan.metadata, references=REFERENCES)
-    report_dir.mkdir(parents=True, exist_ok=True)
+    report_dir.mkdir(parents=True, exist_ok=not new_report)
     try:
         if args.command == "compare":
             report["methods"] = {}
@@ -143,7 +149,7 @@ def main(argv=None):
                 destination = batch_destination(source, args.output)
                 report_dir = (args.report_dir/destination.stem) if args.report_dir else None
                 try:
-                    result = _run_one(source, args, destination, report_dir)
+                    result = run_one(source, args, destination, report_dir)
                     records.append(dict(source=str(source), status="complete", report=str(result)))
                     print(result)
                 except (ValueError, OSError, RuntimeError) as error:
@@ -153,7 +159,7 @@ def main(argv=None):
             args.output.mkdir(parents=True, exist_ok=True)
             write_json(args.output/"batch_report.json", records)
             return 1 if failures else 0
-        result = _run_one(args.inputs, args, getattr(args, "output", None))
+        result = run_one(args.inputs, args, getattr(args, "output", None))
         print(result)
         return 0
     except KeyboardInterrupt:

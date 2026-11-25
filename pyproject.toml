@@ -16,6 +16,9 @@ gpu = ['mlx==0.32.4; sys_platform == "darwin" and platform_machine == "arm64"']
 [project.scripts]
 endoscope-degrid = "endoscope_degrid.cli:main"
 
+[project.gui-scripts]
+endoscope-degrid-desktop = "endoscope_degrid.desktop:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["endoscope_degrid*"]
