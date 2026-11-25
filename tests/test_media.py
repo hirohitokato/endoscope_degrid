@@ -146,3 +146,20 @@ def test_batch_destinations_do_not_collide_for_source_names(tmp_path):
     b = batch_destination(Path("b/source.mp4"), tmp_path)
     assert a != b
     assert main(["batch", str(tmp_path/"missing.mp4"), "-o", str(tmp_path/"output"), "--quiet"]) == 1
+
+
+def test_desktop_export_preserves_existing_report(tmp_path):
+    from endoscope_degrid.cli import parser, run_one
+
+    source = tmp_path / "input.mp4"
+    source.touch()
+    destination = tmp_path / "output.mp4"
+    report_dir = tmp_path / "output_report"
+    report_dir.mkdir()
+    sentinel = report_dir / "report.json"
+    sentinel.write_text("previous export")
+    args = parser().parse_args(["process", str(source), "-o", str(destination)])
+    with pytest.raises(FileExistsError, match="別の保存名"):
+        run_one(source, args, destination, new_report=True)
+    assert sentinel.read_text() == "previous export"
+    assert not destination.exists()

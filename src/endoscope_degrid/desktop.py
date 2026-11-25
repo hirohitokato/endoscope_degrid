@@ -50,7 +50,7 @@ def main():
 
         def process():
             try:
-                run_one(path, args, destination, progress=lambda s: events.put(("progress", s)))
+                run_one(path, args, destination, new_report=True, progress=lambda s: events.put(("progress", s)))
             except Exception as error:
                 events.put(("error", str(error) or type(error).__name__))
             else:

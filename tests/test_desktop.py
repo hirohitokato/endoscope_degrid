@@ -26,7 +26,8 @@ def test_choose_and_export(tmp_path, monkeypatch, short):
     monkeypatch.setattr(desktop.messagebox, "showerror", lambda title, text, **kw: errors.append(text))
     calls = []
 
-    def process(path, args, destination, *, progress):
+    def process(path, args, destination, *, new_report, progress):
+        assert new_report
         calls.append((path, args.duration, destination, threading.current_thread()))
         progress("process")
         if not short:
