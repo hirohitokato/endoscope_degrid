@@ -1,0 +1,25 @@
+# Local Python environment, caches, and package builds
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+/build/
+/dist/
+
+# Processing reports and research outputs
+output/
+/report*/
+*_report/
+/research/results/
+/research/*_timing.json
+*.json.tmp
+
+# Local videos and generated NumPy arrays
+*.[mM][pP]4
+*.[mM][oO][vV]
+*.npz
+*.npy
+
+# macOS metadata
+.DS_Store

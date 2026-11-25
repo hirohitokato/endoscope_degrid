@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "endoscope-degrid"
+version = "0.1.0"
+description = "Non-learning fibre-bundle video reconstruction with calibrated spectral notches"
+requires-python = ">=3.11"
+dependencies = ["av==16.0.1", "numpy==2.2.6", "scipy==1.16.3", "opencv-python-headless==4.12.0.88"]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1"]
+gpu = ['mlx==0.32.4; sys_platform == "darwin" and platform_machine == "arm64"']
+
+[project.scripts]
+endoscope-degrid = "endoscope_degrid.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["endoscope_degrid*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
