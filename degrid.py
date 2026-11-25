@@ -2,7 +2,8 @@
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+if not getattr(sys, "frozen", False):
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 from endoscope_degrid.cli import main
 
 if __name__ == "__main__":

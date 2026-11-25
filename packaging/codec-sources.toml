@@ -1,0 +1,83 @@
+[versions]
+av = "16.0.1"
+opencv-python-headless = "4.12.0.88"
+
+[[common]]
+file = "av-16.0.1.tar.gz"
+url = "https://files.pythonhosted.org/packages/15/c3/fd72a0315bc6c943ced1105aaac6e0ec1be57c70d8a616bd05acaa21ffee/av-16.0.1.tar.gz"
+sha256 = "dd2ce779fa0b5f5889a6d9e00fbbbc39f58e247e52d31044272648fe16ff1dbf"
+
+[[common]]
+file = "pyav-ffmpeg-fab22bcb12748a05f86683ac632fdb96994d970e.tar.gz"
+url = "https://codeload.github.com/PyAV-Org/pyav-ffmpeg/tar.gz/fab22bcb12748a05f86683ac632fdb96994d970e"
+sha256 = "d06a6e071dc9cef1be1ddcdc16b60b8a7a88f742f373f5d02824a4ef7f305385"
+
+[[common]]
+file = "ffmpeg-8.0.tar.xz"
+url = "https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz"
+sha256 = "b2751fccb6cc4c77708113cd78b561059b6fa904b24162fa0be2d60273d27b8e"
+
+[[common]]
+file = "x264-32c3b801191522961102d4bea292cdb61068d0dd.tar.bz2"
+url = "https://code.videolan.org/videolan/x264/-/archive/32c3b801191522961102d4bea292cdb61068d0dd/x264-32c3b801191522961102d4bea292cdb61068d0dd.tar.bz2"
+sha256 = "d7748f350127cea138ad97479c385c9a35a6f8527bc6ef7a52236777cf30b839"
+
+[[common]]
+file = "x265_4.1.tar.gz"
+url = "https://bitbucket.org/multicoreware/x265_git/downloads/x265_4.1.tar.gz"
+sha256 = "a31699c6a89806b74b0151e5e6a7df65de4b49050482fe5ebf8a4379d7af8f29"
+
+[[macos-arm64]]
+file = "ffmpeg-7.1.1.tar.xz"
+url = "https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.xz"
+sha256 = "733984395e0dbbe5c046abda2dc49a5544e7e0e1e2366bba849222ae9e3a03b1"
+
+[[macos-arm64]]
+file = "x264-31e19f9.tar.gz"
+url = "https://codeload.github.com/mirror/x264/tar.gz/31e19f92f00c7003fa115047ce50978bc98c3a0d"
+sha256 = "d053c9d86988d6bc78237ca5205865c5ddf99c98ef4cd9927eec8f6d388f6dd9"
+
+[[macos-arm64]]
+file = "ffmpeg.rb"
+url = "https://raw.githubusercontent.com/Homebrew/homebrew-core/a671b0c7ae230e99a07f541b471a974e3dbfd403/Formula/f/ffmpeg.rb"
+sha256 = "562782f559db343cb8c628c5c30e1ef79dc823bb930819e3adf37c0cef1d53d3"
+
+[[macos-arm64]]
+file = "ffmpeg-svtav1.patch"
+url = "https://github.com/FFmpeg/FFmpeg/commit/d1ed5c06e3edc5f2b5f3664c80121fa55b0baa95.patch?full_index=1"
+sha256 = "0eb23ab90c0e5904590731dd3b81c86a4127785bc2b367267d77723990fb94a2"
+
+[[macos-arm64]]
+file = "ffmpeg-chromium.patch"
+url = "https://gitlab.archlinux.org/archlinux/packaging/packages/ffmpeg/-/raw/5670ccd86d3b816f49ebc18cab878125eca2f81f/add-av_stream_get_first_dts-for-chromium.patch"
+sha256 = "57e26caced5a1382cb639235f9555fc50e45e7bf8333f7c9ae3d49b3241d3f77"
+
+[[macos-arm64]]
+file = "x264.rb"
+url = "https://raw.githubusercontent.com/Homebrew/homebrew-core/a671b0c7ae230e99a07f541b471a974e3dbfd403/Formula/x/x264.rb"
+sha256 = "55018cb6c441d90533aea4d89b1ed043754a9fc26703443e45e5597209b14478"
+
+[[macos-arm64]]
+file = "x265.rb"
+url = "https://raw.githubusercontent.com/Homebrew/homebrew-core/a671b0c7ae230e99a07f541b471a974e3dbfd403/Formula/x/x265.rb"
+sha256 = "0b37a02f95fe4935271558ec4e6f02ea73ae283d107410a57b088559e39ff8f7"
+
+[[macos-arm64]]
+file = "x265-b354c009.patch"
+url = "https://api.bitbucket.org/2.0/repositories/multicoreware/x265_git/diff/b354c009a60bcd6d7fc04014e200a1ee9c45c167"
+sha256 = "f7d3ce261c4b0cd461b55ad00de38ffa6a7cc2fa13ae6f034b3e46d8bb3cb6a8"
+
+[[macos-arm64]]
+file = "x265-51ae8e92.patch"
+url = "https://api.bitbucket.org/2.0/repositories/multicoreware/x265_git/diff/51ae8e922bcc4586ad4710812072289af91492a8"
+sha256 = "56c78f60cbaac61a44cb6e9889ece3380f9b60d32a4b704e274d9a636a16379d"
+
+[[windows-x64]]
+file = "opencv-e9f1da7.tar.gz"
+url = "https://codeload.github.com/opencv/opencv/tar.gz/e9f1da7e8e977a65b8bf8fe7ea8b92eef9171f19"
+sha256 = "be2693804f282839354fdd1273168d0a53f23dac719036f151cb901174b53c54"
+
+[[windows-x64]]
+file = "opencv-thirdparty-0d945ea.tar.gz"
+url = "https://codeload.github.com/opencv/opencv_3rdparty/tar.gz/0d945ea464a6eb9cdd26ea95b6fd1f691a6f13f2"
+sha256 = "fa87075835c0420e0a23b2237e48e9ae2d2a28459b9732e5d82e66c44b55adfd"

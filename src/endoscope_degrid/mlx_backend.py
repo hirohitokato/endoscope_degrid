@@ -23,7 +23,7 @@ def _has_metal():
     # A headless MLX import can abort the interpreter on some installations.
     try:
         arguments = ["--probe-metal"] if getattr(sys, "frozen", False) else [
-            "-c", "from endoscope_degrid.mlx_backend import probe_metal; raise SystemExit(probe_metal())",
+            "-c", "import mlx.core as mx; raise SystemExit(not mx.metal.is_available())",
         ]
         probe = subprocess.run(
             [sys.executable, *arguments],

@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import sys
 import tkinter
+from tempfile import TemporaryDirectory
 
 from PyInstaller import __main__ as pyinstaller
 
@@ -18,11 +19,14 @@ def main():
     pyinstaller.run(["--noconfirm", "packaging/desktop.spec"])
     dist = Path("dist")
     archive = dist / ("Endoscope-Degrid-" + labels[target] + ".zip")
-    if sys.platform == "darwin":
-        subprocess.run(["ditto", "-c", "-k", "--keepParent", dist / "Endoscope Degrid.app",
-                        archive], check=True)
-    else:
-        shutil.make_archive(str(archive.with_suffix("")), "zip", dist, "Endoscope Degrid")
+    with TemporaryDirectory(dir=dist) as staging:
+        temporary = Path(staging) / archive.name
+        if sys.platform == "darwin":
+            subprocess.run(["ditto", "-c", "-k", "--keepParent", dist / "Endoscope Degrid.app",
+                            temporary], check=True)
+        else:
+            shutil.make_archive(str(temporary.with_suffix("").resolve()), "zip", dist, "Endoscope Degrid")
+        temporary.replace(archive)
     print(archive.resolve())
 
 
