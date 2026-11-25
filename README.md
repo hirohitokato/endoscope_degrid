@@ -5,6 +5,12 @@
 `core` はファイバー標本の位置と透過率を推定し、不規則な標本から画像を再構成します。
 学習済みモデル、生成AI、画像全体のぼかし、モルフォロジーは使用しません。
 
+## デスクトップ版
+
+[Desktop builds](https://github.com/hirohitokato/endoscope_degrid/actions/workflows/desktop.yml) の成功した実行から、お使いの OS の配布物をダウンロードできます。ZIP を展開し、Windows x64 では `Endoscope Degrid.exe`、Apple Silicon Mac では `Endoscope Degrid.app` を開いてください。利用者による Python・Node.js・FFmpeg のインストールは不要です。
+
+画面で動画を選び、先頭10秒または全編の書き出し先を指定します。詳しい展開手順、CLI の場所、対応環境、署名とライセンスについては[配布ガイド](docs/DISTRIBUTION.md)を参照してください。
+
 ## ソースから使う
 
 [uv](https://docs.astral.sh/uv/) を用意し、リポジトリのルートで実行します。
@@ -16,8 +22,6 @@ uv run --locked endoscope-degrid-desktop
 ```
 
 実行環境は `.python-version` と `uv.lock` で管理します。PyAV の FFmpeg ライブラリで、すべての動画をローカル処理します。
-
-デスクトップ画面では動画を選び、先頭10秒または全編の出力先を指定します。
 
 ## 使い方
 

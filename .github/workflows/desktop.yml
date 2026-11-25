@@ -1,0 +1,41 @@
+name: Desktop builds
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2022
+            target: windows-x64
+          - runner: macos-15
+            target: macos-arm64
+    runs-on: ${{ matrix.runner }}
+    name: ${{ matrix.target }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: 0.12.17
+      - run: uv sync --locked --managed-python --group packaging --extra test --extra gpu
+      - run: uv run --no-sync python -m pytest -q
+      - run: uv run --no-sync python packaging/build.py
+      - name: Process synthetic interlaced video from the extracted ZIP
+        run: uv run --no-sync python -m pytest -q -s tests/test_desktop_archive.py
+        env:
+          DEGRID_ARCHIVE: dist/Endoscope-Degrid-${{ matrix.target }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Endoscope-Degrid-${{ matrix.target }}
+          path: dist/Endoscope-Degrid-${{ matrix.target }}.zip
+          if-no-files-found: error
+          compression-level: 0
