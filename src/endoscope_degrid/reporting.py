@@ -25,9 +25,16 @@ def write_json(path, value):
     temporary.replace(path)
 
 
-def write_rgb(path, image):
-    if not cv2.imwrite(str(path), cv2.cvtColor(image, cv2.COLOR_RGB2BGR)):
+def write_png(path, bgr):
+    # Let Python open Unicode paths on Windows.
+    ok, encoded = cv2.imencode(".png", bgr)
+    if not ok:
         raise OSError(f"画像を書き込めません: {path}")
+    Path(path).write_bytes(encoded.tobytes())
+
+
+def write_rgb(path, image):
+    write_png(path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
 
 
 def label(image, title):
@@ -49,7 +56,7 @@ def diagnostics(scan, model, directory):
         colored = cv2.applyColorMap(shown, cv2.COLORMAP_INFERNO)
         mask = cv2.cvtColor(np.rint(np.fft.fftshift(field.mask)*255).astype(np.uint8), cv2.COLOR_GRAY2BGR)
         pair = np.concatenate([cv2.resize(colored, (480, 480)), cv2.resize(mask, (480, 480))], axis=1)
-        cv2.imwrite(str(directory/f"spectrum_mask_field_{i}.png"), pair)
+        write_png(directory/f"spectrum_mask_field_{i}.png", pair)
     np.savez_compressed(directory/"calibration.npz", **arrays)
     metrics = []
     x, y, w, h = model.roi

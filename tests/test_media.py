@@ -14,12 +14,13 @@ class Identity:
         return frame.copy()
 
 
-def fixture_video(path, order="tff", variable=False, audio_offset=0):
+def fixture_video(path, order="tff", variable=False, audio_offset=0, frames=None):
     with av.open(str(path), "w", options={"movie_timescale": "240000"}) as out:
         audio = out.add_stream("aac", rate=48000)
         audio.layout = "stereo"
         video = out.add_stream("libx264", rate=Fraction(30000, 1001))
-        video.width = 192; video.height = 128; video.pix_fmt = "yuv420p"
+        video.width, video.height = (192, 128) if frames is None else frames[0].shape[1::-1]
+        video.pix_fmt = "yuv420p"
         video.time_base = Fraction(1, 60000)
         video.codec_context.time_base = Fraction(1, 60000)
         video.codec_context.sample_aspect_ratio = Fraction(4, 3)
@@ -31,9 +32,12 @@ def fixture_video(path, order="tff", variable=False, audio_offset=0):
             video.codec_context.flags |= av.codec.context.Flags.interlaced_dct | av.codec.context.Flags.interlaced_me
         graph = None
         for i in range(18):
-            a = np.full((128, 192, 3), 80+i*3, np.uint8)
-            a[1::2, :, 1] = 170
-            frame = av.VideoFrame.from_ndarray(a, format="rgb24")
+            if frames is None:
+                image = np.full((128, 192, 3), 80+i*3, np.uint8)
+                image[1::2, :, 1] = 170
+            else:
+                image = frames[i]
+            frame = av.VideoFrame.from_ndarray(image, format="rgb24")
             frame.pts = i*2002+(500 if variable and i > 8 else 0)
             frame.time_base = Fraction(1, 60000)
             if graph is None:

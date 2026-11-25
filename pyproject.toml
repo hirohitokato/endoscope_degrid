@@ -13,6 +13,9 @@ dependencies = ["av==16.0.1", "numpy==2.2.6", "scipy==1.16.3", "opencv-python-he
 test = ["pytest==9.1.1"]
 gpu = ['mlx==0.32.4; sys_platform == "darwin" and platform_machine == "arm64"']
 
+[dependency-groups]
+packaging = ["pyinstaller>=6.16,<7"]
+
 [project.scripts]
 endoscope-degrid = "endoscope_degrid.cli:main"
 

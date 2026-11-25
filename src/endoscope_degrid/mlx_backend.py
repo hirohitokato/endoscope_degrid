@@ -13,12 +13,20 @@ class MetalUnavailable(RuntimeError):
     pass
 
 
+def probe_metal():
+    import mlx.core as mx
+    return 0 if mx.metal.is_available() else 1
+
+
 @cache
 def _has_metal():
     # A headless MLX import can abort the interpreter on some installations.
     try:
+        arguments = ["--probe-metal"] if getattr(sys, "frozen", False) else [
+            "-c", "import mlx.core as mx; raise SystemExit(not mx.metal.is_available())",
+        ]
         probe = subprocess.run(
-            [sys.executable, "-c", "import mlx.core as mx; raise SystemExit(not mx.metal.is_available())"],
+            [sys.executable, *arguments],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10,
         )
     except (OSError, subprocess.TimeoutExpired):
